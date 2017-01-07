@@ -33,7 +33,6 @@ end
 beautiful.init(config.base_path .. "/theme.lua")
 
 awful.util.spawn("pactl upload-sample " .. theme.volumewav .. " volumewav", false)
-awful.util.spawn("compton -b", false)
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
@@ -86,6 +85,17 @@ local taglist_buttons = awful.util.table.join(
     awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
 )
 
+mysystray = wibox.widget.systray()
+mysystray.set_base_size(16 * config.ui_scale)
+
+myclock = revolution.widget.conky("${time %H:%M}")
+awful.tooltip({
+    objects = { myclock },
+    timer_function = function()
+        return os.date("Today is %A %B %d %Y\nThe time is %T")
+    end,
+})
+
 -- Create widgets for bottom wibars on each screen
 local con  = "<span color='\\#6699CC'>"
 local coff = "</span>"
@@ -124,14 +134,17 @@ awful.screen.connect_for_each_screen(function(s)
         -- Middle widgets
         s == screen.primary and {
             layout = wibox.layout.fixed.horizontal,
-            revolution.widget.conky("CPU " .. con .. "${cpu}%" .. coff),
-            revolution.widget.conky("MEM " .. con .. "${mem}" .. coff)
+            revolution.widget.conky(" BAT " .. con .. "${battery_short}" .. coff),
+            revolution.widget.conky(" CPU " .. con .. "${cpu}% ${acpitemp}°" .. coff),
+            revolution.widget.conky(" MEM " .. con .. "${mem}" .. coff),
+            revolution.widget.conky(" SSD " .. con .. "↑${diskio_read} ↓${diskio_write}" .. coff),
+            revolution.widget.conky("${if_up wlp2s0} WLAN " .. con .. "↑${upspeed wlp2s0} ↓${downspeed wlp2s0}" .. coff)
         },
         -- Right widgets
         {
             layout = wibox.layout.fixed.horizontal,
-            wibox.widget.systray(),
-            revolution.widget.conky("${time %H:%M}"),
+            wibox.container.margin(mysystray, 0, 0, 10, 0),
+            myclock,
             s.mylayoutbox
         }
     }

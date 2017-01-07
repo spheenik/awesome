@@ -10,7 +10,7 @@ theme.volumewav     = config.resource_path .. "/volume.wav"
 theme.awesome_icon  = config.resource_path .. "/awesome-icon.png"
 
 -- FONTS
-theme.font      = "Hack " .. (math.floor(10 * config.ui_scale))
+theme.font      = "Hack 10"
 
 -- COLORS
 theme.fg_normal  = "#DCDCCC"
@@ -28,7 +28,10 @@ theme.border_normal = "#2A373E"
 theme.border_focus  = "#495F6C"
 theme.border_marked = "#CC9393"
 
---TAGLIST
+-- TOOLTIP
+theme.tooltip_fg = theme.fg_normal
+
+-- TAGLIST
 theme.taglist_squares_sel   = config.resource_path .. "/taglist/squarefz.png"
 theme.taglist_squares_unsel = config.resource_path .. "/taglist/squarez.png"
 
