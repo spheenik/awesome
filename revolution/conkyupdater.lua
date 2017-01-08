@@ -22,7 +22,6 @@ function conkyupdater.start()
         conky.config = {
             out_to_console = true,
             out_to_x = false,
-            background = false,
             update_interval = 1.0,
             update_interval_on_battery = 1.0,
             total_run_times = 0,
