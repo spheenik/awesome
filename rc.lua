@@ -32,8 +32,6 @@ end
 -- Theme init
 beautiful.init(config.base_path .. "/theme.lua")
 
-awful.util.spawn("pactl upload-sample " .. theme.volumewav .. " volumewav", false)
-
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
     awful.layout.suit.tile,
@@ -134,11 +132,12 @@ awful.screen.connect_for_each_screen(function(s)
         -- Middle widgets
         s == screen.primary and {
             layout = wibox.layout.fixed.horizontal,
-            revolution.widget.conky(" BAT " .. con .. "${battery_short}" .. coff),
+            revolution.widget.conky("${if_existing /sys/class/power_supply/BAT0/present 1} BAT " .. con .. "${battery_short}" .. coff .. "${endif}"),
             revolution.widget.conky(" CPU " .. con .. "${cpu}% ${acpitemp}°" .. coff),
             revolution.widget.conky(" MEM " .. con .. "${mem}" .. coff),
             revolution.widget.conky(" SSD " .. con .. "↑${diskio_read} ↓${diskio_write}" .. coff),
-            revolution.widget.conky("${if_up wlp2s0} WLAN " .. con .. "↑${upspeed wlp2s0} ↓${downspeed wlp2s0}" .. coff)
+            revolution.widget.conky("${if_up wlp2s0} WLAN " .. con .. "↑${upspeed wlp2s0} ↓${downspeed wlp2s0}" .. coff .. "${endif}"),
+            revolution.widget.conky("${if_up br0} LAN " .. con .. "↑${upspeed br0} ↓${downspeed br0}" .. coff .. "${endif}")
         },
         -- Right widgets
         {
