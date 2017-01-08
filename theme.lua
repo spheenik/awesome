@@ -6,7 +6,6 @@ local transparent   = "#00000000"
 theme = {}
 
 theme.wallpaper     = config.resource_path .. "/wall.jpg"
-theme.volumewav     = config.resource_path .. "/volume.wav"
 theme.awesome_icon  = config.resource_path .. "/awesome-icon.png"
 
 -- FONTS
