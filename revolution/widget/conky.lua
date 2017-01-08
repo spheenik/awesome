@@ -5,9 +5,9 @@ local updater = require("revolution.conkyupdater")
 -- revolution.widget.textclock
 local conky = { mt = {} }
 
---- Create a conky widget. It draws the time it is in a textbox.
--- @param text The time format. Default is " %a %b %d, %H:%M ".
--- @return A textbox widget.
+--- Create a conky widget.
+-- @param format The string given to conky
+-- @return the widget
 function conky.new(format)
     local w = textbox()
     updater.register(format, function(text) w:set_markup(text) end)

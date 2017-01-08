@@ -1,18 +1,12 @@
 -- Grab environment we need
-local setmetatable = setmetatable
-
-local capi =
-{
-    awesome = awesome
-}
+local awesome = awesome
 local debug = require("gears.debug")
-local spawn = require("awful.spawn")
 local naughty = require("naughty")
+local spawn = require("awful.spawn")
 local lgi = require("lgi")
 local Gio = lgi.Gio
 
--- revolution.conky
-local conkyupdater = { mt = {} }
+local conkyupdater = { }
 
 local formats = {}
 local callbacks = {}
@@ -40,11 +34,11 @@ function conkyupdater.start()
 
 --    naughty.notify({ text = debug.dump_return(config), timeout = 100 })
 
-    local pid, _, stdin, stdout, _ = capi.awesome.spawn("conky -c -", false, true, true, false, nil)
+    local pid, _, stdin, stdout, _ = awesome.spawn("conky -c -", false, true, true, false, nil)
     assert(type(pid) == "number", "Failed to start conky: " .. pid)
 
-    capi.awesome.connect_signal("exit", function()
-        capi.awesome.kill(pid, capi.awesome.unix_signal.SIGINT)
+    awesome.connect_signal("exit", function()
+        awesome.kill(pid, awesome.unix_signal.SIGINT)
     end)
 
     local cfg_stream = Gio.UnixOutputStream.new(stdin, true)
@@ -60,8 +54,4 @@ function conkyupdater.start()
     spawn.read_lines(Gio.UnixInputStream.new(stdout, true), callback, nil, true)
 end
 
-function conkyupdater.mt:__call(...)
-    return conkyupdater.new(...)
-end
-
-return setmetatable(conkyupdater, conkyupdater.mt)
+return conkyupdater
