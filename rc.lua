@@ -136,8 +136,9 @@ awful.screen.connect_for_each_screen(function(s)
             revolution.widget.conky(" CPU " .. con .. "${cpu}% ${acpitemp}°" .. coff),
             revolution.widget.conky(" MEM " .. con .. "${mem}" .. coff),
             revolution.widget.conky(" SSD " .. con .. "↑${diskio_read} ↓${diskio_write}" .. coff),
+            revolution.widget.conky("${if_up br0} LAN " .. con .. "↑${upspeed br0} ↓${downspeed br0}" .. coff .. "${endif}"),
+            revolution.widget.conky("${if_up enp0s20f0u2u3} LAN " .. con .. "↑${upspeed enp0s20f0u2u3} ↓${downspeed enp0s20f0u2u3}" .. coff .. "${endif}"),
             revolution.widget.conky("${if_up wlp2s0} WLAN " .. con .. "↑${upspeed wlp2s0} ↓${downspeed wlp2s0}" .. coff .. "${endif}"),
-            revolution.widget.conky("${if_up br0} LAN " .. con .. "↑${upspeed br0} ↓${downspeed br0}" .. coff .. "${endif}")
         },
         -- Right widgets
         {
