@@ -367,7 +367,8 @@ awful.rules.rules = {
             buttons = clientbuttons,
             screen = awful.screen.preferred,
             placement = awful.placement.no_overlap + awful.placement.no_offscreen
-        }
+        },
+
     },
     -- Ignore terminal size hints
     {
@@ -392,7 +393,8 @@ awful.rules.rules = {
                 "feh",
             },
             name = {
-                "Event Tester",  -- xev.
+                "Event Tester",     -- xev
+		        "Steam -.*News.*",   -- Steam News Popup
             },
             role = {
                 "AlarmWindow",  -- Thunderbird's calendar.
@@ -401,7 +403,8 @@ awful.rules.rules = {
         },
         properties = {
             floating = true
-        }
+        },
+        -- callback = function(c) naughty.notify{ title="new window", text = c.name } end
     },
     -- Add titlebars to normal clients and dialogs
     {
@@ -414,6 +417,16 @@ awful.rules.rules = {
         properties = {
             titlebars_enabled = true
         }
+    },
+    -- unmaximize firefox
+	{ 
+        rule = { 
+            instance = "firefox" 
+        },
+        properties = { 
+            maximized_vertical = false,
+            maximized_horizontal = false,
+        } 
     },
 }
 
@@ -473,3 +486,5 @@ end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+
+-- vim: filetype=lua:expandtab:shiftwidth=4:tabstop=4:softtabstop=4
