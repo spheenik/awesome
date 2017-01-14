@@ -84,7 +84,6 @@ local taglist_buttons = awful.util.table.join(
 )
 
 mysystray = wibox.widget.systray()
-mysystray.set_base_size(16 * config.ui_scale)
 
 myclock = revolution.widget.conky("${time %H:%M}")
 awful.tooltip({
@@ -143,7 +142,7 @@ awful.screen.connect_for_each_screen(function(s)
         -- Right widgets
         {
             layout = wibox.layout.fixed.horizontal,
-            wibox.container.margin(mysystray, 0, 0, 10, 0),
+            mysystray,
             myclock,
             s.mylayoutbox
         }
@@ -484,7 +483,26 @@ client.connect_signal("request::titlebars", function(c)
     }
 end)
 
-client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
-client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+-- A client should get focused / raised
+client.connect_signal("request::activate", function(c, context, hints)
+    client.focus = c
+    c:raise()
+    awful.ewmh.activate(c, context, hints)
+end)
+
+-- A client gets it's urgent property set
+client.connect_signal("property::urgent", function()
+    awful.client.urgent.jumpto()
+end)
+
+-- A client gets focused
+client.connect_signal("focus", function(c)
+    c.border_color = beautiful.border_focus
+end)
+
+-- A client gets unfocused
+client.connect_signal("unfocus", function(c)
+    c.border_color = beautiful.border_normal
+end)
 
 -- vim: filetype=lua:expandtab:shiftwidth=4:tabstop=4:softtabstop=4
