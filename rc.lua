@@ -365,7 +365,9 @@ awful.rules.rules = {
             keys = clientkeys,
             buttons = clientbuttons,
             screen = awful.screen.preferred,
-            placement = awful.placement.no_overlap + awful.placement.no_offscreen
+            placement = awful.placement.no_overlap + awful.placement.no_offscreen,
+            maximized_vertical = false,
+            maximized_horizontal = false,
         },
 
     },
@@ -416,16 +418,6 @@ awful.rules.rules = {
         properties = {
             titlebars_enabled = true
         }
-    },
-    -- unmaximize firefox
-	{ 
-        rule = { 
-            instance = "firefox" 
-        },
-        properties = { 
-            maximized_vertical = false,
-            maximized_horizontal = false,
-        } 
     },
 }
 
