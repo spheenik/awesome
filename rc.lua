@@ -132,7 +132,7 @@ awful.screen.connect_for_each_screen(function(s)
         s == screen.primary and {
             layout = wibox.layout.fixed.horizontal,
             revolution.widget.conky("${if_existing /sys/class/power_supply/BAT0/present 1} BAT " .. con .. "${battery_short}" .. coff .. "${endif}"),
-            revolution.widget.conky(" CPU " .. con .. "${cpu}% ${acpitemp}°" .. coff),
+            revolution.widget.conky(" CPU " .. con .. "${cpu}% ${platform coretemp.0/hwmon/hwmon1 temp 1}°" .. coff),
             revolution.widget.conky(" MEM " .. con .. "${mem}" .. coff),
             revolution.widget.conky(" SSD " .. con .. "↑${diskio_read} ↓${diskio_write}" .. coff),
             revolution.widget.conky("${if_up br0} LAN " .. con .. "↑${upspeed br0} ↓${downspeed br0}" .. coff .. "${endif}"),
