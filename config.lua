@@ -18,9 +18,11 @@ function compute_scale_factor()
 end
 
 return {
+    modkey = "Mod4",
+
     terminal = "urxvt",
     editor = "vim",
-    modkey = "Mod4",
+    screenshot = "gnome-screenshot --interactive",
 
     base_path = script_path(),
     resource_path = script_path() .. "/resources",

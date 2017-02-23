@@ -161,7 +161,7 @@ root.buttons(awful.util.table.join(
 
 -- Global key bindings
 globalkeys = awful.util.table.join(
-    awful.key({ config.modkey,           }, "s",      hotkeys_popup.show_help,
+    awful.key({ config.modkey,           }, "q",      hotkeys_popup.show_help,
         {description="show help", group="awesome"}),
     awful.key({ config.modkey,           }, "Left",   awful.tag.viewprev,
         {description = "view previous", group = "tag"}),
@@ -183,6 +183,10 @@ globalkeys = awful.util.table.join(
         {description = "focus previous by index", group = "client"}
     ),
 
+    -- Screenshot
+    awful.key({ config.modkey }, "s", function () awful.spawn(config.screenshot) end,
+        {description = "make a screenshot", group = "screen"}),
+
     -- Layout manipulation
     awful.key({ config.modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
         {description = "swap with next client by index", group = "client"}),
@@ -194,6 +198,22 @@ globalkeys = awful.util.table.join(
         {description = "focus the previous screen", group = "screen"}),
     awful.key({ config.modkey,           }, "u", awful.client.urgent.jumpto,
         {description = "jump to urgent client", group = "client"}),
+    awful.key({ config.modkey,           }, "y", function()
+        local box = wibox({
+            x = 10,
+            y = 10,
+            width = 200,
+            height = 200,
+            ontop = true,
+            visible = true,
+            screen = awful.screen.focused (),
+            widget = wibox.widget.textbox('This <i>is</i> a <b>textbox</b>!!!')
+        })
+        box.connect_signal("mouse::click", function(c) end)
+    end,
+        {description = "jump to urgent client", group = "client"}),
+
+
     awful.key({ config.modkey,           }, "Tab",
         function ()
             awful.client.focus.history.previous()
@@ -241,11 +261,11 @@ globalkeys = awful.util.table.join(
 
     -- Run
     awful.key({ config.modkey }, "r", function() awful.spawn("rofi -show run", false) end,
-        {description = "show run dialog", group = "awesome"}),
+        {description = "show run dialog", group = "launcher"}),
 
     -- Show windows
     awful.key({ config.modkey }, "w", function() awful.spawn("rofi -show window", false) end,
-        {description = "show open windows", group = "awesome"}),
+        {description = "show open windows", group = "client"}),
 
     -- Volume Control
     awful.key({ }, "XF86AudioRaiseVolume", function ()
