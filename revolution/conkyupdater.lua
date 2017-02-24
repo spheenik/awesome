@@ -33,7 +33,7 @@ function conkyupdater.start()
 
 --    naughty.notify({ text = debug.dump_return(config), timeout = 100 })
 
-    local pid, _, stdin, stdout, _ = awesome.spawn("conky -c -", false, true, true, false, nil)
+    local pid, _, stdin, stdout, _ = awesome.spawn({"conky", "-c", "-"}, false, true, true, false, nil)
     assert(type(pid) == "number", "Failed to start conky: " .. pid)
 
     awesome.connect_signal("exit", function()
@@ -41,7 +41,8 @@ function conkyupdater.start()
     end)
 
     local cfg_stream = Gio.UnixOutputStream.new(stdin, true)
-    cfg_stream:write(config)
+    cfg_stream:write_all(config)
+    cfg_stream:close()
 
     local callback = function(line)
 --        naughty.notify({ text = line })
