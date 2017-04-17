@@ -84,6 +84,7 @@ local taglist_buttons = awful.util.table.join(
 )
 
 mysystray = wibox.widget.systray()
+mysystray.forced_width = config.scale(60)
 
 myclock = revolution.widget.conky("${time %H:%M}")
 awful.tooltip({
