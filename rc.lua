@@ -388,8 +388,9 @@ awful.rules.rules = {
             placement = awful.placement.no_overlap + awful.placement.no_offscreen,
             maximized_vertical = false,
             maximized_horizontal = false,
+            titlebars_enabled = false,
         },
-
+        --callback = function(c) naughty.notify{ timeout=0, title="new window", text = "name: " .. c.name .. ", instance: " .. c.instance .. ", class: " .. c.class .. ", pid: " .. c.pid } end
     },
     -- Ignore terminal size hints
     {
@@ -399,6 +400,19 @@ awful.rules.rules = {
         properties = {
             size_hints_honor = false
         }
+    },
+    -- minimize enpass on startup
+    {
+        rule = { name = "Enpass" },
+        callback = function(c) 
+            local n = _G['_enpass_min'] or 0
+            --naughty.notify{ timeout=0, title="enpass minimizer count", text = "" .. n }  
+            if n < 2 then
+                c:kill()
+                n = n + 1
+            end
+            _G['_enpass_min'] = n
+        end
     },
     -- Floating clients.
     {
@@ -425,7 +439,6 @@ awful.rules.rules = {
         properties = {
             floating = true
         },
-        -- callback = function(c) naughty.notify{ title="new window", text = c.name } end
     },
     -- Add titlebars to normal clients and dialogs
     {
