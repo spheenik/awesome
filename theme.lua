@@ -18,14 +18,16 @@ theme.fg_urgent  = "#84FFFF"
 theme.bg_normal  = black
 theme.bg_focus   = theme.bg_normal
 theme.bg_urgent  = theme.bg_normal
-theme.bg_systray = theme.bg_normal
-theme.bg_systray = transparent
 
 -- BORDERS
-theme.border_width  = math.floor(2 * config.ui_scale)
+theme.border_width  = config.scale(2)
 theme.border_normal = "#2A373E"
 theme.border_focus  = "#495F6C"
 theme.border_marked = "#CC9393"
+
+-- SYSTRAY
+theme.bg_systray = theme.bg_normal
+theme.systray_icon_spacing = config.scale(4)
 
 -- TOOLTIP
 theme.tooltip_fg = theme.fg_normal
@@ -35,8 +37,8 @@ theme.taglist_squares_sel   = config.resource_path .. "/taglist/squarefz.png"
 theme.taglist_squares_unsel = config.resource_path .. "/taglist/squarez.png"
 
 -- MENU
-theme.menu_height = (math.floor(20 * config.ui_scale))
-theme.menu_width  = (math.floor(200 * config.ui_scale))
+theme.menu_height = config.scale(20)
+theme.menu_width  = config.scale(200)
 theme.menu_bg_normal = theme.bg_normal
 theme.menu_bg_focus = "#6699CC"
 theme.menu_fg_focus = black

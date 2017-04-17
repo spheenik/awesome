@@ -17,6 +17,8 @@ function compute_scale_factor()
     return 1
 end
 
+local scale = compute_scale_factor();
+
 return {
     modkey = "Mod4",
 
@@ -26,5 +28,8 @@ return {
 
     base_path = script_path(),
     resource_path = script_path() .. "/resources",
-    ui_scale = compute_scale_factor()
+    ui_scale = scale,
+
+    scale = function(n) return math.floor(scale * n) end
+
 }
