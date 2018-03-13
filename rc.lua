@@ -431,6 +431,8 @@ awful.rules.rules = {
             name = {
                 "Event Tester",     -- xev
 		        "Steam -.*News.*",   -- Steam News Popup
+                "Dota VConsole Client",
+                "Dota Record Parser",
             },
             role = {
                 "AlarmWindow",  -- Thunderbird's calendar.
