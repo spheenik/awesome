@@ -53,7 +53,7 @@ myawesomemenu = {
     { "manual",         config.terminal .. " -e man awesome" },
     { "edit config",    config.terminal .. " -e " .. config.editor .. " " .. awesome.conffile },
     { "restart",        awesome.restart },
-    { "quit",           awesome.quit }
+    { "quit",           function() awesome.quit() end }
 }
 mymainmenu = awful.menu({
     items = {
