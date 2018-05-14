@@ -433,6 +433,7 @@ awful.rules.rules = {
 		        "Steam -.*News.*",   -- Steam News Popup
                 "Dota VConsole Client",
                 "Dota Record Parser",
+                "GLFW.*",
             },
             role = {
                 "AlarmWindow",  -- Thunderbird's calendar.
