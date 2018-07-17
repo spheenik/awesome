@@ -188,6 +188,10 @@ globalkeys = awful.util.table.join(
     awful.key({ config.modkey }, "s", function () awful.spawn(config.screenshot) end,
         {description = "make a screenshot", group = "screen"}),
 
+    -- Lock Screen
+    awful.key({ config.modkey }, "i", function () awful.spawn(config.lockscreen) end,
+        {description = "lock the screen", group = "screen"}),
+
     -- Layout manipulation
     awful.key({ config.modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
         {description = "swap with next client by index", group = "client"}),

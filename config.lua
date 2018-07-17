@@ -25,6 +25,7 @@ return {
     terminal = "urxvt",
     editor = "vim",
     screenshot = "gnome-screenshot --interactive",
+    lockscreen = "i3lock -fo",
 
     base_path = script_path(),
     resource_path = script_path() .. "/resources",
