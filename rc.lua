@@ -400,6 +400,7 @@ awful.rules.rules = {
                 "Event Tester",     -- xev
 		        "Steam -.*News.*",   -- Steam News Popup
                 "Dota VConsole Client",
+                "Transfer Agent",
                 "Dota Record Parser",
                 "GLFW.*",
             },
