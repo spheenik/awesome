@@ -25,7 +25,7 @@ return function(config)
             widget = revolution.widget.conky
         },
         {
-            value = "↑${diskio_read /dev/sda} ↓${diskio_write /dev/sda}",
+            value = "↑${diskio_write /dev/sda} ↓${diskio_read /dev/sda}",
             label = "DUMP",
             widget = revolution.widget.conky
         },
