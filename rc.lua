@@ -84,9 +84,11 @@ local taglist_buttons = awful.util.table.join(
 )
 
 mysystray = wibox.widget.systray()
-mysystray.forced_width = config.scale(60)
+-- mysystray.forced_width = config.scale(100)
 
-myclock = revolution.widget.conky("${time %H:%M}")
+myclock = revolution.widget.conky()
+myclock:set_value("${time %H:%M}")
+myclock:set_value_color(beautiful.fg_normal)
 awful.tooltip({
     objects = { myclock },
     timer_function = function()
@@ -95,8 +97,6 @@ awful.tooltip({
 })
 
 -- Create widgets for bottom wibars on each screen
-local con  = "<span color='\\#6699CC'>"
-local coff = "</span>"
 awful.screen.connect_for_each_screen(function(s)
 
     -- Wallpaper
@@ -130,16 +130,7 @@ awful.screen.connect_for_each_screen(function(s)
             s.mytaglist
         },
         -- Middle widgets
-        s == screen.primary and {
-            layout = wibox.layout.fixed.horizontal,
-            revolution.widget.conky("${if_existing /sys/class/power_supply/BAT0/present 1} BAT " .. con .. "${battery_short}" .. coff .. "${endif}"),
-            revolution.widget.conky(" CPU " .. con .. "${cpu}% ${platform coretemp.0/hwmon/hwmon1 temp 1}°" .. coff),
-            revolution.widget.conky(" MEM " .. con .. "${mem}" .. coff),
-            revolution.widget.conky(" SSD " .. con .. "↑${diskio_read} ↓${diskio_write}" .. coff),
-            revolution.widget.conky("${if_up br0} LAN " .. con .. "↑${upspeed br0} ↓${downspeed br0}" .. coff .. "${endif}"),
-            revolution.widget.conky("${if_up enp0s20f0u2u3} LAN " .. con .. "↑${upspeed enp0s20f0u2u3} ↓${downspeed enp0s20f0u2u3}" .. coff .. "${endif}"),
-            revolution.widget.conky("${if_up wlp2s0} WLAN " .. con .. "↑${upspeed wlp2s0} ↓${downspeed wlp2s0}" .. coff .. "${endif}"),
-        },
+        config.middle_widgets,
         -- Right widgets
         {
             layout = wibox.layout.fixed.horizontal,
@@ -203,22 +194,6 @@ globalkeys = awful.util.table.join(
         {description = "focus the previous screen", group = "screen"}),
     awful.key({ config.modkey,           }, "u", awful.client.urgent.jumpto,
         {description = "jump to urgent client", group = "client"}),
-    awful.key({ config.modkey,           }, "y", function()
-        local box = wibox({
-            x = 10,
-            y = 10,
-            width = 200,
-            height = 200,
-            ontop = true,
-            visible = true,
-            screen = awful.screen.focused (),
-            widget = wibox.widget.textbox('This <i>is</i> a <b>textbox</b>!!!')
-        })
-        box.connect_signal("mouse::click", function(c) end)
-    end,
-        {description = "jump to urgent client", group = "client"}),
-
-
     awful.key({ config.modkey,           }, "Tab",
         function ()
             awful.client.focus.history.previous()
@@ -307,6 +282,13 @@ clientkeys = awful.util.table.join(
         {description = "move to screen", group = "client"}),
     awful.key({ config.modkey,           }, "t",      function (c) c.ontop = not c.ontop            end,
         {description = "toggle keep on top", group = "client"}),
+    awful.key({ config.modkey, "Control" }, "t",
+        function (c)
+            c:emit_signal("request::titlebars")
+            naughty.notify { title = "TOGGLE NOW" }
+            awful.titlebar.toggle(c)
+        end,
+        {description = "toggle titlebar", group = "client"}),
     awful.key({ config.modkey,           }, "n",
         function (c)
             -- The client currently has the input focus, so it cannot be
@@ -399,25 +381,7 @@ awful.rules.rules = {
     },
     -- Ignore terminal size hints
     {
-        rule_any = {
-            instance = { "urxvt"}
-        },
-        properties = {
-            size_hints_honor = false
-        }
-    },
-    -- minimize enpass on startup
-    {
-        rule = { name = "Enpass" },
-        callback = function(c) 
-            local n = _G['_enpass_min'] or 0
-            --naughty.notify{ timeout=0, title="enpass minimizer count", text = "" .. n }  
-            if n < 2 then
-                c:kill()
-                n = n + 1
-            end
-            _G['_enpass_min'] = n
-        end
+        rule = { instance = "urxvt" }, properties = { size_hints_honor = false }
     },
     -- Floating clients.
     {
@@ -448,6 +412,35 @@ awful.rules.rules = {
             floating = true
         },
     },
+    -- Quartus
+    {
+        rule = { class = "Quartus" },
+        except = { type = "normal" },
+        properties = {
+            floating = true
+        }
+--[[
+
+        callback = function(c)
+            if c.type ~= "normal" then
+
+                c:connect_signal("property::floating", function()
+                    if c.floating then
+                        naughty.notify { title = "true" }
+                    else
+                        naughty.notify { title = "false" }
+                    end
+                end)
+
+                naughty.notify { title = "OPENED " .. c.name .. " TYPE " .. c.type }
+                --c.floating = true
+                --awful.titlebar.show(c)
+                awful.client.floating.set(c, true)
+                awful.placement.centered(c)
+            end
+        end
+--]]
+    },
     -- Add titlebars to normal clients and dialogs
     {
         rule_any = {
@@ -476,6 +469,10 @@ end)
 
 -- Add a titlebar if titlebars_enabled is set to true in the rules.
 client.connect_signal("request::titlebars", function(c)
+    if c.titlebar_created then return end
+    c.titlebar_created = true
+    naughty.notify { title = "TB CREATE" }
+
     -- buttons for the titlebar
     local buttons = awful.util.table.join(
         awful.button({ }, 1, function()

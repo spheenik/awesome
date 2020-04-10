@@ -25,6 +25,12 @@ theme.border_normal = "#2A373E"
 theme.border_focus  = "#495F6C"
 theme.border_marked = "#CC9393"
 
+-- CONKY WIDGET
+theme.conky_fg  = "#6699CC"
+theme.conky_spacing = 8
+theme.conky_margin_left  = 12
+theme.conky_margin_right = 0
+
 -- SYSTRAY
 theme.bg_systray = theme.bg_normal
 theme.systray_icon_spacing = config.scale(4)

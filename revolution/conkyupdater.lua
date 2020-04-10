@@ -26,12 +26,13 @@ function conkyupdater.start()
             update_interval_on_battery = 1.0,
             total_run_times = 0,
             short_units = true,
+	    nvidia_display = ":0",
             if_up_strictness = address
         };
         conky.text = [[return {]=] .. table.concat(formats, ",") .. [=[}]]
     ]=]
 
---    naughty.notify({ text = debug.dump_return(config), timeout = 100 })
+    -- naughty.notify({ text = debug.dump_return(config), timeout = 100 })
 
     local pid, _, stdin, stdout, _ = awesome.spawn({"conky", "-c", "-"}, false, true, true, false)
     assert(type(pid) == "number", "Failed to start conky: " .. pid)
