@@ -30,7 +30,7 @@ return function(config)
             value = "↑${upspeed wlp2s0} ↓${downspeed wlp2s0}",
             label = "WLAN",
             widget = revolution.widget.conky
-        },
+        }
     }
 end
 

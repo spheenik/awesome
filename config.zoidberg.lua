@@ -20,7 +20,7 @@ return function(config)
             widget = revolution.widget.conky
         },
         {
-            value = "↑${diskio_read /dev/nvme1n1p2} ↓${diskio_write /dev/nvme1n1p2}",
+            value = "↑${diskio_read /dev/nvme1n1p2} ↓${diskio_write /dev/nvme1n1p2} "..config.hwmon("nvme", 1, "temp 1").."°",
             label = "SSD",
             widget = revolution.widget.conky
         },
