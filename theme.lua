@@ -27,8 +27,8 @@ theme.border_marked = "#CC9393"
 
 -- CONKY WIDGET
 theme.conky_fg  = "#6699CC"
-theme.conky_spacing = 8
-theme.conky_margin_left  = 12
+theme.conky_spacing = config.scale(8)
+theme.conky_margin_left  = config.scale(12)
 theme.conky_margin_right = 0
 
 -- SYSTRAY
