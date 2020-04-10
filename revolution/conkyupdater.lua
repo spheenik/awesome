@@ -12,8 +12,15 @@ local formats = {}
 local callbacks = {}
 
 function conkyupdater.register(format, callback)
-    table.insert(formats, '"' .. format .. '"')
-    table.insert(callbacks, callback)
+    format = '"' .. format .. '"'
+    for i,v in ipairs(formats) do
+        if v == format then
+            table.insert(callbacks[i], callback)
+            return
+        end
+    end
+    table.insert(formats, format)
+    table.insert(callbacks, { callback })
 end
 
 function conkyupdater.start()
@@ -26,7 +33,6 @@ function conkyupdater.start()
             update_interval_on_battery = 1.0,
             total_run_times = 0,
             short_units = true,
-	    nvidia_display = ":0",
             if_up_strictness = address
         };
         conky.text = [[return {]=] .. table.concat(formats, ",") .. [=[}]]
@@ -46,9 +52,11 @@ function conkyupdater.start()
     cfg_stream:close()
 
     local callback = function(line)
---        naughty.notify({ text = line })
-        for i,v in ipairs(loadstring(line)()) do
-            callbacks[i](v)
+        -- naughty.notify({ text = line })
+        for i,text in ipairs(loadstring(line)()) do
+            for j,callback in ipairs(callbacks[i]) do
+                callback(text)
+            end
         end
     end
 
