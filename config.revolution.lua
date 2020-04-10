@@ -5,6 +5,12 @@ return function(config)
     config.middle_widgets = {
         layout = wibox.layout.fixed.horizontal,    
         {
+            enabled = "${if_existing /sys/class/power_supply/BAT0/present 1}1${endif}",
+            value = "${battery_short} "..config.hwmon("BAT0", 1, "in 0").."V "..config.hwmon("BAT0", 1, "curr 1 0.001 0").."A",
+            label = "BAT",
+            widget = revolution.widget.conky
+        },
+        {
             value = "${cpu}% "..config.hwmon("coretemp", 1, "temp 1").."°",
             label = "CPU",
             widget = revolution.widget.conky
@@ -15,7 +21,7 @@ return function(config)
             widget = revolution.widget.conky
         },
         {
-            value = "↑${diskio_write /dev/nvme0n1} ↓${diskio_read /dev/nvme0n1}",
+            value = "↑${diskio_write /dev/nvme0n1} ↓${diskio_read /dev/nvme0n1} "..config.hwmon("nvme", 1, "temp 1").."°",
             label = "SSD",
             widget = revolution.widget.conky
         },
