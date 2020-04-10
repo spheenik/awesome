@@ -11,12 +11,20 @@ local function update_text(self, text)
     self._private.value:set_markup('<span foreground="' .. self._private.value_color .. '">' .. text .. '</span>')
 end
 
+local function update_enabled(self, enabled)
+    self._private.container_margin.visible = (enabled ~= nil and enabled ~= "")
+end
+
 function conky:set_label(label)
     self._private.label:set_text(label)
 end
 
 function conky:set_value(value)
     updater.register(value, function(text) update_text(self, text) end)
+end
+
+function conky:set_enabled(enabled)
+    updater.register(enabled, function(text) update_enabled(self, text) end)
 end
 
 function conky:set_spacing(spacing)

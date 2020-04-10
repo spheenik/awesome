@@ -20,7 +20,7 @@ return function(config)
             widget = revolution.widget.conky
         },
         {
-            value = "↑${diskio_read /dev/nvme1n1p2} ↓${diskio_write /dev/nvme1n1p2} "..config.hwmon("nvme", 1, "temp 1").."°",
+            value = "↑${diskio_write /dev/nvme1n1p2} ↓${diskio_read /dev/nvme1n1p2} "..config.hwmon("nvme", 1, "temp 1").."°",
             label = "SSD",
             widget = revolution.widget.conky
         },
@@ -30,6 +30,7 @@ return function(config)
             widget = revolution.widget.conky
         },
         {
+            enabled = "${if_up br0}1${endif}",
             value = "↑${upspeed br0} ↓${downspeed br0}",
             label = "LAN",
             widget = revolution.widget.conky
