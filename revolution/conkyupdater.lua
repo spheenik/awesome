@@ -10,6 +10,7 @@ local conkyupdater = { }
 
 local formats = {}
 local callbacks = {}
+local line_buf = ""
 
 function conkyupdater.register(format, callback)
     format = '"' .. format .. '"'
@@ -52,11 +53,15 @@ function conkyupdater.start()
     cfg_stream:close()
 
     local callback = function(line)
-        -- naughty.notify({ text = line })
-        for i,text in ipairs(loadstring(line)()) do
-            for j,callback in ipairs(callbacks[i]) do
-                callback(text)
+        line_buf = line_buf..line
+        if (line_buf:sub(-1) == "}") then
+            -- naughty.notify({ text = line_buf })
+            for i,text in ipairs(loadstring(line_buf)()) do
+                for j,callback in ipairs(callbacks[i]) do
+                    callback(text)
+                end
             end
+            line_buf = ""
         end
     end
 

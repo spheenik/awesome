@@ -10,7 +10,7 @@ return function(config)
             widget = revolution.widget.conky
         },
         {
-            value = "${exec cat /sys/class/drm/card0/device/gpu_busy_percent}% "..config.hwmon("amdgpu", 1, "temp 1").."°",
+            value = "${head /sys/class/drm/card0/device/gpu_busy_percent 1 1}% "..config.hwmon("amdgpu", 1, "temp 1").."°",
             label = "GPU",
             widget = revolution.widget.conky
         },
