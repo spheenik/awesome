@@ -134,7 +134,7 @@ awful.screen.connect_for_each_screen(function(s)
         -- Right widgets
         {
             layout = wibox.layout.fixed.horizontal,
-            wibox.layout.margin(mysystray, config.scale(7), config.scale(7), config.scale(2), config.scale(2)),
+            wibox.container.margin(mysystray, config.scale(7), config.scale(7), config.scale(2), config.scale(2)),
             myclock,
             s.mylayoutbox
         }
