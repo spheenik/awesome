@@ -56,7 +56,7 @@ function conkyupdater.start()
         line_buf = line_buf..line
         if (line_buf:sub(-1) == "}") then
             -- naughty.notify({ text = line_buf })
-            for i,text in ipairs(loadstring(line_buf)()) do
+            for i,text in ipairs(load(line_buf)()) do
                 for j,callback in ipairs(callbacks[i]) do
                     callback(text)
                 end
