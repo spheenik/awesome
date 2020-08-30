@@ -5,7 +5,7 @@ return function(config)
     config.middle_widgets = {
         layout = wibox.layout.fixed.horizontal,    
         {
-            value = "${cpu}% "..config.hwmon("k10temp", 1, "temp 1").."/"..config.hwmon("k10temp", 2, "temp 1").."°",
+            value = "${cpu}% "..config.hwmon("k10temp", 1, "temp 2").."/"..config.hwmon("k10temp", 2, "temp 2").."°",
             label = "CPU",
             widget = revolution.widget.conky
         },
