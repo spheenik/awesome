@@ -264,6 +264,12 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "XF86AudioMute", function()
         awful.util.spawn("pactl -- set-sink-mute @DEFAULT_SINK@ toggle", false)
         awful.util.spawn("pactl -- play-sample volumewav", false)
+    end),
+    awful.key({ }, "XF86MonBrightnessUp", function()
+        awful.util.spawn("light -A 10", false)
+    end),
+    awful.key({ }, "XF86MonBrightnessDown", function()
+        awful.util.spawn("light -U 10", false)
     end)
 )
 
