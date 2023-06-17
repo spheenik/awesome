@@ -37,12 +37,18 @@ return function(config)
             widget = revolution.widget.conky
         },
         {
-            enabled = "${if_up wlp1s0}1${endif}",
-            value = "↑${upspeed wlp1s0} ↓${downspeed wlp1s0}",
+            enabled = "${if_up wlan0}1${endif}",
+            value = "↑${upspeed wlan0} ↓${downspeed wlan0}",
             label = "WLAN",
             widget = revolution.widget.conky
+        },
+        {
+            enabled = "${if_up nordlynx}1${endif}",
+            value = "↑${upspeed nordlynx} ↓${downspeed nordlynx}",
+            label = "VPN",
+            widget = revolution.widget.conky
         }
-    }
+     }
 end
 
 
