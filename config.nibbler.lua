@@ -6,7 +6,7 @@ return function(config)
         layout = wibox.layout.fixed.horizontal,    
         {
             enabled = "${if_existing /sys/class/power_supply/BAT0/present 1}1${endif}",
-            value = "${battery_short} "..config.hwmon("BAT0", 1, "in 0").."V "..config.hwmon("BAT0", 1, "curr 1 0.001 0").."A",
+            value = "${battery_short} ${battery_time}",
             label = "BAT",
             widget = revolution.widget.conky
         },
@@ -16,7 +16,7 @@ return function(config)
             widget = revolution.widget.conky
         },
         {
-            value = "${head /sys/class/drm/card0/device/gpu_busy_percent 1 1}% "..config.hwmon("amdgpu", 1, "temp 1").."°",
+            value = "${head /sys/class/drm/card1/device/gpu_busy_percent 1 1}% "..config.hwmon("amdgpu", 1, "temp 1").."°",
             label = "GPU",
             widget = revolution.widget.conky
         },
@@ -31,8 +31,8 @@ return function(config)
             widget = revolution.widget.conky
         },
         {
-            enabled = "${if_up eno1}1${endif}",
-            value = "↑${upspeed eno1} ↓${downspeed eno1}",
+            enabled = "${if_up enp99s0f3u1}1${endif}",
+            value = "↑${upspeed enp99s0f3u1} ↓${downspeed enp99s0f3u1}",
             label = "LAN",
             widget = revolution.widget.conky
         },
