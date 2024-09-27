@@ -5,12 +5,12 @@ return function(config)
     config.middle_widgets = {
         layout = wibox.layout.fixed.horizontal,    
         {
-            value = "${cpu}% "..config.hwmon("k10temp", 1, "temp 2").."/"..config.hwmon("k10temp", 2, "temp 2").."°",
+            value = "${cpu}% "..config.hwmon("k10temp", 1, "temp 1").."°",
             label = "CPU",
             widget = revolution.widget.conky
         },
         {
-            value = "${head /sys/class/drm/card0/device/gpu_busy_percent 1 1}% "..config.hwmon("amdgpu", 1, "temp 1").."°",
+            value = "${head /sys/class/drm/card1/device/gpu_busy_percent 1 1}% "..config.hwmon("amdgpu", 1, "temp 1").."°",
             label = "GPU",
             widget = revolution.widget.conky
         },
@@ -20,7 +20,7 @@ return function(config)
             widget = revolution.widget.conky
         },
         {
-            value = "↑${diskio_write /dev/nvme1n1p2} ↓${diskio_read /dev/nvme1n1p2} "..config.hwmon("nvme", 1, "temp 1").."°",
+            value = "↑${diskio_write /dev/nvme0n1p2} ↓${diskio_read /dev/nvme0n1p2} "..config.hwmon("nvme", 1, "temp 1").."°",
             label = "SSD",
             widget = revolution.widget.conky
         },

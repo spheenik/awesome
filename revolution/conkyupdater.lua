@@ -34,6 +34,7 @@ function conkyupdater.start()
             update_interval_on_battery = 1.0,
             total_run_times = 0,
             short_units = true,
+            no_buffers = true,
             if_up_strictness = address
         };
         conky.text = [[return {]=] .. table.concat(formats, ",") .. [=[}]]

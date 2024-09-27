@@ -49,7 +49,7 @@ local sensors = determine_sensors()
 local config = {
     modkey = "Mod4",
 
-    terminal = "urxvt",
+    terminal = "alacritty",
     editor = "vim",
     screenshot = "gnome-screenshot --interactive",
     lockscreen = "i3lock -fo",
