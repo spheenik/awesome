@@ -1,7 +1,11 @@
 local config = require("config")
+local gtk = require("beautiful.gtk")
+local gdebug = require('gears.debug')
+
+local gtktheme = gtk.get_theme_variables();
+gdebug.dump(gtktheme)
 
 local black         = "#000000"
-local transparent   = "#00000000"
 
 theme = {}
 
@@ -9,7 +13,7 @@ theme.wallpaper     = config.resource_path .. "/wall.jpg"
 theme.awesome_icon  = config.resource_path .. "/awesome-icon.png"
 
 -- FONTS
-theme.font      = ("Hack %s"):format(config.scalef(10))
+theme.font      = ("Hack %s"):format(config.scalef(gtktheme.font_size))
 
 -- COLORS
 theme.fg_normal  = "#DCDCCC"
