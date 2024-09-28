@@ -335,12 +335,7 @@ clientkeys = awful.util.table.join(
         {description = "move to screen", group = "client"}),
     awful.key({ config.modkey,           }, "t",      function (c) c.ontop = not c.ontop            end,
         {description = "toggle keep on top", group = "client"}),
-    awful.key({ config.modkey, "Control" }, "t",
-        function (c)
-            c:emit_signal("request::titlebars")
-            naughty.notify { title = "TOGGLE NOW" }
-            awful.titlebar.toggle(c)
-        end,
+    awful.key({ config.modkey, "Control" }, "t",      awful.titlebar.toggle                            ,
         {description = "toggle titlebar", group = "client"}),
     awful.key({ config.modkey,           }, "n",
         function (c)
@@ -454,10 +449,9 @@ ruled.client.connect_signal("request::rules", function()
     -- @DOC_FLOATING_RULE@
     -- Dialogs
     ruled.client.append_rule {
-        id       = "dialog",
-        rule_any = {
-            type    = { "dialog" }
-        },
+        id = "dialog",
+        rule = { type = "dialog" },
+        except = { requests_no_titlebar = true },
         properties = { titlebars_enabled = true }
     }
 
