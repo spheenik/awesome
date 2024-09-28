@@ -74,6 +74,7 @@ local config = {
 
     base_path = script_path(),
     resource_path = script_path() .. "resources",
+    arc_resource_path = "/usr/share/themes/Arc/unity",
     ui_scale = scale,
 
     scalef = fn_scalef,
