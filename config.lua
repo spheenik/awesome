@@ -1,5 +1,3 @@
-local gears = require("gears")
-local naughty = require("naughty")
 local Gio = require("lgi").Gio
 
 function script_path()
@@ -32,16 +30,25 @@ function determine_host_name()
 end
 
 function determine_sensors()
-    local names = read_stdout_synchronously("cat /sys/class/hwmon/hwmon*/name")
+    local base = '/sys/class/hwmon/hwmon';
+    local names = read_stdout_synchronously('find '..base..'* -type l -printf "%p " -exec cat {}/name \\;')
 
-    local index = 0
     local lookup = {}
-    for name in names:gmatch("([^\n]*)\n?") do
-      if (lookup[name] == nil) then
-        lookup[name] = {}
-      end
-      table.insert(lookup[name], index)
-      index = index + 1
+    for entry in names:gmatch("([^\n]*)\n?") do
+        local parts = {}
+        for part in entry:gmatch("([^ ]*) ?") do
+            table.insert(parts, part)
+        end
+
+        local index = tonumber(parts[1]:sub(base:len() + 1))
+        local driver = parts[2];
+        print(("hwmon: index: %i, driver: %s"):format(index, driver))
+
+        if (lookup[driver] == nil) then
+            lookup[driver] = {}
+        end
+        table.insert(lookup[driver], index)
+        index = index + 1
     end
     return lookup
 end
