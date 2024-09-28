@@ -5,7 +5,20 @@ local gdebug = require('gears.debug')
 local gtktheme = gtk.get_theme_variables();
 gdebug.dump(gtktheme)
 
-local black         = "#000000"
+-- fonts
+local font_monospace         = ("Hack %s"):format(config.scalef(gtktheme.font_size))
+local font_monospace_bold    = ("Hack Bold %s"):format(config.scalef(gtktheme.font_size))
+local font_proportional      = ("%s %s"):format(gtktheme.font_family, config.scalef(gtktheme.font_size))
+local font_proportional_bold = ("%s Bold %s"):format(gtktheme.font_family, config.scalef(gtktheme.font_size))
+
+-- colors
+local grey_light  = "#BDC0C5"
+local grey_dark   = "#16181d"
+local black       = "#000000"
+local blue        = "#4877b1"
+local blue_dark   = "#2B476A"
+local blue_darker = "#192A3F"
+local orange      = "#f57f1f"
 
 theme = {}
 
@@ -13,27 +26,24 @@ theme.wallpaper     = config.resource_path .. "/wall.jpg"
 theme.awesome_icon  = config.resource_path .. "/awesome-icon.png"
 
 -- FONTS
-theme.font         =  ("Hack %s"):format(config.scalef(gtktheme.font_size))
-theme.titlebar_font = ("%s %s"):format(
-        gtktheme.font_family,
-        config.scalef(gtktheme.font_size))
+theme.font          = font_monospace
 
 -- COLORS
-theme.fg_normal  = "#DCDCCC"
-theme.fg_focus   = "#6699CC"
-theme.fg_urgent  = "#84FFFF"
-theme.bg_normal  = black
+theme.fg_normal  = grey_light
+theme.fg_focus   = blue
+theme.fg_urgent  = orange
+theme.bg_normal  = grey_dark
 theme.bg_focus   = theme.bg_normal
 theme.bg_urgent  = theme.bg_normal
 
 -- BORDERS
 theme.border_width  = config.scale(2)
-theme.border_normal = "#2A373E"
-theme.border_focus  = "#495F6C"
-theme.border_marked = "#CC9393"
+theme.border_normal = blue_darker
+theme.border_focus  = blue_dark
+theme.border_marked = orange
 
 -- CONKY WIDGET
-theme.conky_fg  = "#6699CC"
+theme.conky_fg  = blue
 theme.conky_spacing = config.scale(8)
 theme.conky_margin_left  = config.scale(12)
 theme.conky_margin_right = 0
@@ -46,6 +56,8 @@ theme.systray_icon_spacing = config.scale(4)
 theme.tooltip_fg = theme.fg_normal
 
 -- TAGLIST
+theme.taglist_font          = font_monospace
+theme.taglist_fg_focus      = orange
 theme.taglist_squares_sel   = config.resource_path .. "/taglist/squarefz.png"
 theme.taglist_squares_unsel = config.resource_path .. "/taglist/squarez.png"
 
@@ -53,7 +65,7 @@ theme.taglist_squares_unsel = config.resource_path .. "/taglist/squarez.png"
 theme.menu_height = config.scale(20)
 theme.menu_width  = config.scale(200)
 theme.menu_bg_normal = theme.bg_normal
-theme.menu_bg_focus = "#6699CC"
+theme.menu_bg_focus = blue
 theme.menu_fg_focus = black
 theme.menu_submenu_icon = "/usr/share/awesome/themes/default/submenu.png"
 
@@ -72,6 +84,7 @@ theme.layout_magnifier  = config.resource_path .. "/layouts/magnifier.png"
 theme.layout_floating   = config.resource_path .. "/layouts/floating.png"
 
 -- TITLEBAR
+theme.titlebar_font = font_proportional_bold
 
 -- window unfocused
 theme.titlebar_close_button_normal            = config.arc_resource_path .. "/close_dash.svg"

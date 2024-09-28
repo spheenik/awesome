@@ -103,14 +103,12 @@ mymainmenu = awful.menu({
 mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon, menu = mymainmenu })
 
 -- Create a systray
-mysystray = wibox.container.background(
-        wibox.container.margin(
-                wibox.widget.systray(),
-                config.scalef(0),
-                config.scalef(10),
-                config.scalef(3),
-                config.scalef(3)),
-        "#000000"
+mysystray = wibox.container.margin(
+    wibox.widget.systray(),
+    config.scalef(0),
+    config.scalef(10),
+    config.scalef(3),
+    config.scalef(3)
 )
 
 -- Create a clock
