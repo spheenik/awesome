@@ -9,7 +9,7 @@ theme.wallpaper     = config.resource_path .. "/wall.jpg"
 theme.awesome_icon  = config.resource_path .. "/awesome-icon.png"
 
 -- FONTS
-theme.font      = "Hack 10"
+theme.font      = ("Hack %s"):format(config.scalef(10))
 
 -- COLORS
 theme.fg_normal  = "#DCDCCC"

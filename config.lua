@@ -1,5 +1,6 @@
 local gears = require("gears")
 local naughty = require("naughty")
+local Gio = require("lgi").Gio
 
 function script_path()
     local str = debug.getinfo(2, "S").source:sub(2)
@@ -13,13 +14,15 @@ function read_stdout_synchronously(command)
 	return content
 end
 
-function compute_scale_factor()
-	local dpi = read_stdout_synchronously("xdpyinfo | awk -F'[ x]+' '/resolution:/{print $3}'")
-        if dpi and dpi ~= "" then
-            if tonumber(dpi) >= 144 then
-                return 2
-            end
-        end
+function determine_scale_factor()
+    local status, scale = pcall(function()
+        local settings = Gio.Settings.new('org.gnome.desktop.interface')
+        local scale = settings:get_double('text-scaling-factor')
+        return scale
+    end)
+    if (status) then
+        return scale;
+    end
     return 1
 end
 
@@ -28,7 +31,7 @@ function determine_host_name()
     return name
 end
 
-function determine_sensors() 
+function determine_sensors()
     local names = read_stdout_synchronously("cat /sys/class/hwmon/hwmon*/name")
 
     local index = 0
@@ -36,14 +39,14 @@ function determine_sensors()
     for name in names:gmatch("([^\n]*)\n?") do
       if (lookup[name] == nil) then
         lookup[name] = {}
-      end 
+      end
       table.insert(lookup[name], index)
       index = index + 1
     end
     return lookup
 end
 
-local scale = compute_scale_factor()
+local scale = determine_scale_factor()
 local sensors = determine_sensors()
 
 local config = {
@@ -58,10 +61,11 @@ local config = {
     resource_path = script_path() .. "resources",
     ui_scale = scale,
 
+    scalef = function(n) return scale * n end,
     scale = function(n) return math.floor(scale * n) end,
-    
+
     host_name = determine_host_name(),
-   
+
     hwmon = function(name, index, suffix) return "${hwmon " .. sensors[name][index] .. " " .. suffix .. "}" end
 }
 

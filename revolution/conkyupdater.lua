@@ -1,6 +1,6 @@
 -- Grab environment we need
 local awesome = awesome
-local debug = require("gears.debug")
+local gdebug = require("gears.debug")
 local naughty = require("naughty")
 local spawn = require("awful.spawn")
 local lgi = require("lgi")
@@ -40,12 +40,13 @@ function conkyupdater.start()
         conky.text = [[return {]=] .. table.concat(formats, ",") .. [=[}]]
     ]=]
 
-    -- naughty.notify({ text = debug.dump_return(config), timeout = 100 })
+    gdebug.print_warning(gdebug.dump_return(config))
 
     local pid, _, stdin, stdout, _ = awesome.spawn({"conky", "-c", "-"}, false, true, true, false)
     assert(type(pid) == "number", "Failed to start conky: " .. pid)
 
     awesome.connect_signal("exit", function()
+        gdebug.print_warning('Killing conky')
         awesome.kill(pid, awesome.unix_signal.SIGINT)
     end)
 

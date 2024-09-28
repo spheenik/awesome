@@ -1,4 +1,5 @@
 local gears = require("gears")
+local gdebug = require("gears.debug")
 local awful = require("awful")
 require("awful.autofocus")
 local wibox = require("wibox")
@@ -134,7 +135,7 @@ awful.screen.connect_for_each_screen(function(s)
         -- Right widgets
         {
             layout = wibox.layout.fixed.horizontal,
-            wibox.container.background(        
+            wibox.container.background(
                 wibox.container.margin(mysystray, config.scale(7), config.scale(7), config.scale(2), config.scale(2)),
                 "#000000"
             ),
