@@ -1,92 +1,111 @@
+-- awesome_mode: api-level=4:screen=on
+-- If LuaRocks is installed, make sure that packages installed through it are
+-- found (e.g. lgi). If LuaRocks is not installed, do nothing.
+pcall(require, "luarocks.loader")
+
+-- @DOC_REQUIRE_SECTION@
+-- Standard awesome library
 local gears = require("gears")
 local gdebug = require("gears.debug")
 local awful = require("awful")
 require("awful.autofocus")
+-- Widget and layout library
 local wibox = require("wibox")
+-- Theme handling library
 local beautiful = require("beautiful")
+-- Notification library
 local naughty = require("naughty")
+-- Declarative object management
+local ruled = require("ruled")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
+-- Custom
 local revolution = require("revolution")
 local config = require("config")
 
--- Error handling
-if awesome.startup_errors then
-    naughty.notify({ preset = naughty.config.presets.critical,
-        title = "Oops, there were errors during startup!",
-        text = awesome.startup_errors })
-end
-do
-    local in_error = false
-    awesome.connect_signal("debug::error", function (err)
-        -- Make sure we don't go into an endless error loop
-        if in_error then return end
-        in_error = true
+-- {{{ Error handling
+-- Check if awesome encountered an error during startup and fell back to
+-- another config (This code will only ever execute for the fallback config)
+-- @DOC_ERROR_HANDLING@
+naughty.connect_signal("request::display_error", function(message, startup)
+    naughty.notification {
+        urgency = "critical",
+        title   = "Oops, an error happened"..(startup and " during startup!" or "!"),
+        message = message
+    }
+end)
+-- }}}
 
-        naughty.notify({ preset = naughty.config.presets.critical,
-            title = "Oops, an error happened!",
-            text = tostring(err) })
-        in_error = false
-    end)
-end
-
--- Theme init
+-- {{{ Variable definitions
+-- @DOC_LOAD_THEME@
+-- Themes define colours, icons, font and wallpapers.
 beautiful.init(config.base_path .. "/theme.lua")
 
+-- Menubar configuration
+menubar.utils.terminal = config.terminal -- Set the terminal for applications that require it
+-- }}}
+
+-- {{{ Tag layout
+-- @DOC_LAYOUT@
 -- Table of layouts to cover with awful.layout.inc, order matters.
-awful.layout.layouts = {
-    awful.layout.suit.tile,
-    awful.layout.suit.tile.left,
-    awful.layout.suit.tile.bottom,
-    awful.layout.suit.tile.top,
-    awful.layout.suit.floating,
-    --    awful.layout.suit.fair,
-    --    awful.layout.suit.fair.horizontal,
-    --    awful.layout.suit.spiral,
-    --    awful.layout.suit.spiral.dwindle,
-    --    awful.layout.suit.max,
-    --    awful.layout.suit.max.fullscreen,
-    --    awful.layout.suit.magnifier
-}
+tag.connect_signal("request::default_layouts", function()
+    awful.layout.append_default_layouts({
+        awful.layout.suit.tile,
+        awful.layout.suit.tile.left,
+        awful.layout.suit.tile.bottom,
+        awful.layout.suit.tile.top,
+        awful.layout.suit.floating,
+        --    awful.layout.suit.fair,
+        --    awful.layout.suit.fair.horizontal,
+        --    awful.layout.suit.spiral,
+        --    awful.layout.suit.spiral.dwindle,
+        --    awful.layout.suit.max,
+        --    awful.layout.suit.max.fullscreen,
+        --    awful.layout.suit.magnifier
+    })
+end)
+
+-- {{{ Wallpaper
+-- @DOC_WALLPAPER@
+screen.connect_signal("request::wallpaper", function(s)
+    awful.wallpaper {
+        screen = s,
+        widget = {
+            image  = gears.surface.crop_surface {
+                surface = gears.surface.load_uncached(beautiful.wallpaper),
+                ratio = s.geometry.width/s.geometry.height,
+            },
+            widget = wibox.widget.imagebox
+        }
+    }
+end)
+-- }}}
+
+-- {{{ Wibar
 
 -- Create a laucher widget and a main menu
 myawesomemenu = {
+    { "hotkeys", function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
     { "manual",         config.terminal .. " -e man awesome" },
     { "edit config",    config.terminal .. " -e " .. config.editor .. " " .. awesome.conffile },
     { "restart",        awesome.restart },
     { "quit",           function() awesome.quit() end }
 }
+
 mymainmenu = awful.menu({
     items = {
         { "awesome",    myawesomemenu, beautiful.awesome_icon },
-	    { "sleep",      "systemctl suspend" },
-	    { "power off",  "systemctl poweroff" },
+        { "sleep",      "systemctl suspend" },
+        { "power off",  "systemctl poweroff" },
         { "reboot",     "systemctl reboot" }
     }
 })
 mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon, menu = mymainmenu })
 
--- Configure buttons for taglist
-local taglist_buttons = awful.util.table.join(
-    awful.button({ }, 1, function(t) t:view_only() end),
-    awful.button({ config.modkey }, 1, function(t)
-        if client.focus then
-            client.focus:move_to_tag(t)
-        end
-    end),
-    awful.button({ }, 3, awful.tag.viewtoggle),
-    awful.button({ config.modkey }, 3, function(t)
-        if client.focus then
-            client.focus:toggle_tag(t)
-        end
-    end),
-    awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
-    awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
-)
-
+-- Create a systray
 mysystray = wibox.widget.systray()
--- mysystray.forced_width = config.scale(100)
 
+-- Create a clock
 myclock = revolution.widget.conky()
 myclock:set_value("${time %H:%M}")
 myclock:set_value_color(beautiful.fg_normal)
@@ -97,53 +116,77 @@ awful.tooltip({
     end,
 })
 
--- Create widgets for bottom wibars on each screen
-awful.screen.connect_for_each_screen(function(s)
-
-    -- Wallpaper
-    gears.wallpaper.maximized(beautiful.wallpaper, s, true)
+-- @DOC_FOR_EACH_SCREEN@
+screen.connect_signal("request::desktop_decoration", function(s)
 
     -- Each screen has its own tag table.
     awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
 
-    -- Create the wibox
-    s.mywibox = awful.wibar({ position = "bottom", screen = s })
-
     -- Create a taglist widget
-    s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
-
-    -- Create an imagebox widget which will contains an icon indicating which layout we're using.
-    -- We need one layoutbox per screen.
-    s.mylayoutbox = awful.widget.layoutbox(s)
-    s.mylayoutbox:buttons(awful.util.table.join(
-        awful.button({ }, 1, function () awful.layout.inc( 1) end),
-        awful.button({ }, 3, function () awful.layout.inc(-1) end),
-        awful.button({ }, 4, function () awful.layout.inc( 1) end),
-        awful.button({ }, 5, function () awful.layout.inc(-1) end)))
-
-    -- Add widgets to the wibox
-    s.mywibox:setup {
-        layout = wibox.layout.align.horizontal,
-        -- Left widgets
-        {
-            layout = wibox.layout.fixed.horizontal,
-            mylauncher,
-            s.mytaglist
-        },
-        -- Middle widgets
-        config.middle_widgets,
-        -- Right widgets
-        {
-            layout = wibox.layout.fixed.horizontal,
-            wibox.container.background(
-                wibox.container.margin(mysystray, config.scale(7), config.scale(7), config.scale(2), config.scale(2)),
-                "#000000"
-            ),
-            myclock,
-            s.mylayoutbox
+    s.mytaglist = awful.widget.taglist {
+        screen  = s,
+        filter  = awful.widget.taglist.filter.all,
+        buttons = {
+            awful.button({ }, 1, function(t) t:view_only() end),
+            awful.button({ modkey }, 1, function(t)
+                if client.focus then
+                    client.focus:move_to_tag(t)
+                end
+            end),
+            awful.button({ }, 3, awful.tag.viewtoggle),
+            awful.button({ modkey }, 3, function(t)
+                if client.focus then
+                    client.focus:toggle_tag(t)
+                end
+            end),
+            awful.button({ }, 4, function(t) awful.tag.viewprev(t.screen) end),
+            awful.button({ }, 5, function(t) awful.tag.viewnext(t.screen) end),
         }
     }
+
+    -- Create an imagebox widget which will contain an icon indicating which layout we're using.
+    -- We need one layoutbox per screen.
+    s.mylayoutbox = awful.widget.layoutbox {
+        screen  = s,
+        buttons = {
+            awful.button({ }, 1, function () awful.layout.inc( 1) end),
+            awful.button({ }, 3, function () awful.layout.inc(-1) end),
+            awful.button({ }, 4, function () awful.layout.inc(-1) end),
+            awful.button({ }, 5, function () awful.layout.inc( 1) end),
+        }
+    }
+
+    -- @DOC_WIBAR@
+    -- Create the wibox
+    s.mywibox = awful.wibar {
+        position = "bottom",
+        screen   = s,
+        -- @DOC_SETUP_WIDGETS@
+        widget   = {
+            layout = wibox.layout.align.horizontal,
+            -- Left widgets
+            {
+                layout = wibox.layout.fixed.horizontal,
+                mylauncher,
+                s.mytaglist
+            },
+            -- Middle widgets
+            config.middle_widgets,
+            -- Right widgets
+            {
+                layout = wibox.layout.fixed.horizontal,
+                wibox.container.background(
+                        wibox.container.margin(mysystray, config.scale(7), config.scale(7), config.scale(2), config.scale(2)),
+                        "#000000"
+                ),
+                myclock,
+                s.mylayoutbox
+            }
+        }
+    }
+
 end)
+
 
 -- Start conky
 revolution.conkyupdater.start()
@@ -311,7 +354,22 @@ clientkeys = awful.util.table.join(
             c.maximized = not c.maximized
             c:raise()
         end ,
-        {description = "maximize", group = "client"})
+        {description = "maximize", group = "client"}),
+
+        awful.key({ config.modkey, "Control" }, "i", function(c)
+            local props = {
+                "window", "pid",
+                "group_window", "leader_window",
+                "startup_id",
+                "instance", "class",
+                "type", "name", "role", "modal"}
+            for _, name in pairs(props) do
+                print(("%s: %s"):format(name, c[name]))
+            end
+            print("---")
+        end,
+        { description = "dump client info", group = "client" })
+
 )
 
 -- Number key bindings
@@ -369,14 +427,18 @@ clientbuttons = awful.util.table.join(
 
 root.keys(globalkeys)
 
--- Rules to apply to new clients (through the "manage" signal).
-awful.rules.rules = {
+
+-- {{{ Rules
+-- Rules to apply to new clients.
+-- @DOC_RULES@
+ruled.client.connect_signal("request::rules", function()
+
+    -- @DOC_GLOBAL_RULE@
     -- All clients will match this rule.
-    {
-        rule = { },
+    ruled.client.append_rule {
+        id         = "global",
+        rule       = { },
         properties = {
-            border_width = beautiful.border_width,
-            border_color = beautiful.border_normal,
             focus = awful.client.focus.filter,
             raise = true,
             keys = clientkeys,
@@ -386,119 +448,66 @@ awful.rules.rules = {
             maximized_vertical = false,
             maximized_horizontal = false,
             titlebars_enabled = false,
-        },
-        --callback = function(c) naughty.notify{ timeout=0, title="new window", text = "name: " .. c.name .. ", instance: " .. c.instance .. ", class: " .. c.class .. ", pid: " .. c.pid } end
-    },
-    -- Ignore terminal size hints
-    {
-        rule = { instance = "urxvt" }, properties = { size_hints_honor = false }
-    },
-    -- Floating clients.
-    {
+        }
+    }
+
+    -- @DOC_FLOATING_RULE@
+    -- Dialogs
+    ruled.client.append_rule {
+        id       = "dialog",
         rule_any = {
-            instance = {
-                "plugin-container",
-                "ProjectGenesis",
+            type    = { "dialog" }
+        },
+        properties = { titlebars_enabled = true }
+    }
+
+    -- @DOC_FLOATING_RULE@
+    -- Floating clients.
+    ruled.client.append_rule {
+        id       = "floating",
+        rule_any = {
+            instance = { "copyq", "pinentry", "plugin-container", "ProjectGenesis" },
+            class    = {
+                "Arandr", "Blueman-manager", "Gpick", "Kruler", "Sxiv",
+                "Tor Browser", "Wpa_gui", "veromix", "xtightvncviewer",
+                "MPlayer", "mpv", "pinentry", "feh"
             },
-            class = {
-                "MPlayer",
-                "mpv",
-                "pinentry",
-                "feh",
-            },
-            name = {
-                "Event Tester",     -- xev
-		        "Steam -.*News.*",   -- Steam News Popup
+            -- Note that the name property shown in xprop might be set slightly after creation of the client
+            -- and the name shown there might not match defined rules here.
+            name    = {
+                "Event Tester",  -- xev.
+                "Steam -.*News.*",   -- Steam News Popup
                 "Dota VConsole Client",
                 "Transfer Agent",
                 "Dota Record Parser",
                 "GLFW.*",
             },
-            role = {
-                "AlarmWindow",  -- Thunderbird's calendar.
-                "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
+            role    = {
+                "AlarmWindow",    -- Thunderbird's calendar.
+                "ConfigManager",  -- Thunderbird's about:config.
+                "pop-up",         -- e.g. Google Chrome's (detached) Developer Tools.
             }
         },
-        properties = {
-            floating = true
-        },
-    },
-    -- Quartus
-    {
-        rule = { class = "Quartus" },
-        except = { type = "normal" },
-        properties = {
-            floating = true
-        }
---[[
-
-        callback = function(c)
-            if c.type ~= "normal" then
-
-                c:connect_signal("property::floating", function()
-                    if c.floating then
-                        naughty.notify { title = "true" }
-                    else
-                        naughty.notify { title = "false" }
-                    end
-                end)
-
-                naughty.notify { title = "OPENED " .. c.name .. " TYPE " .. c.type }
-                --c.floating = true
-                --awful.titlebar.show(c)
-                awful.client.floating.set(c, true)
-                awful.placement.centered(c)
-            end
-        end
---]]
-    },
-    -- Add titlebars to normal clients and dialogs
-    {
-        rule_any = {
-            type = {
-                -- "normal",
-                -- "dialog"
-            }
-        },
-        properties = {
-            titlebars_enabled = true
-        }
-    },
-}
-
--- Function to execute when a new client appears.
-client.connect_signal("manage", function (c)
-    -- Set the windows at the slave,
-    -- i.e. put it at the end of others instead of setting it master.
-    -- if not awesome.startup then awful.client.setslave(c) end
-
-    if awesome.startup and not c.size_hints.user_position and not c.size_hints.program_position then
-        -- Prevent clients from being unreachable after screen count changes.
-        awful.placement.no_offscreen(c)
-    end
+        properties = { floating = true }
+    }
 end)
 
+
+-- {{{ Titlebars
+-- @DOC_TITLEBARS@
 -- Add a titlebar if titlebars_enabled is set to true in the rules.
 client.connect_signal("request::titlebars", function(c)
-    if c.titlebar_created then return end
-    c.titlebar_created = true
-    naughty.notify { title = "TB CREATE" }
-
     -- buttons for the titlebar
-    local buttons = awful.util.table.join(
+    local buttons = {
         awful.button({ }, 1, function()
-            client.focus = c
-            c:raise()
-            awful.mouse.client.move(c)
+            c:activate { context = "titlebar", action = "mouse_move"  }
         end),
         awful.button({ }, 3, function()
-            client.focus = c
-            c:raise()
-            awful.mouse.client.resize(c)
-        end)
-    )
+            c:activate { context = "titlebar", action = "mouse_resize"}
+        end),
+    }
 
-    awful.titlebar(c) : setup {
+    awful.titlebar(c).widget = {
         { -- Left
             awful.titlebar.widget.iconwidget(c),
             buttons = buttons,
@@ -506,7 +515,7 @@ client.connect_signal("request::titlebars", function(c)
         },
         { -- Middle
             { -- Title
-                align  = "center",
+                halign = "center",
                 widget = awful.titlebar.widget.titlewidget(c)
             },
             buttons = buttons,
@@ -523,6 +532,7 @@ client.connect_signal("request::titlebars", function(c)
         layout = wibox.layout.align.horizontal
     }
 end)
+-- }}}
 
 -- A client should get focused / raised
 client.connect_signal("request::activate", function(c, context, hints)
@@ -536,14 +546,38 @@ client.connect_signal("property::urgent", function()
     awful.client.urgent.jumpto()
 end)
 
--- A client gets focused
-client.connect_signal("focus", function(c)
-    c.border_color = beautiful.border_focus
+-- {{{ Notifications
+
+ruled.notification.connect_signal('request::rules', function()
+    -- All notifications will match this rule.
+    ruled.notification.append_rule {
+        rule       = { },
+        properties = {
+            screen           = awful.screen.preferred,
+            implicit_timeout = 5,
+        }
+    }
 end)
 
--- A client gets unfocused
-client.connect_signal("unfocus", function(c)
-    c.border_color = beautiful.border_normal
+naughty.connect_signal("request::display", function(n)
+    naughty.layout.box { notification = n }
 end)
+
+
+
+-- Function to execute when a new client appears.
+--client.connect_signal("manage", function (c)
+--    -- Set the windows at the slave,
+--    -- i.e. put it at the end of others instead of setting it master.
+--    -- if not awesome.startup then awful.client.setslave(c) end
+--
+--    if awesome.startup and not c.size_hints.user_position and not c.size_hints.program_position then
+--        -- Prevent clients from being unreachable after screen count changes.
+--        awful.placement.no_offscreen(c)
+--    end
+--end)
+
+
+
 
 -- vim: filetype=lua:expandtab:shiftwidth=4:tabstop=4:softtabstop=4
