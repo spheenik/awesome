@@ -244,11 +244,11 @@ globalkeys = awful.util.table.join(
         {description = "restore minimized", group = "client"}),
 
     -- Run
-    awful.key({ config.modkey }, "r", function() awful.spawn("rofi -show run", false) end,
+    awful.key({ config.modkey }, "r", function() awful.spawn(config.rofi.." -show run", false) end,
         {description = "show run dialog", group = "launcher"}),
 
     -- Show windows
-    awful.key({ config.modkey }, "w", function() awful.spawn("rofi -show window", false) end,
+    awful.key({ config.modkey }, "w", function() awful.spawn(config.rofi.." -show window", false) end,
         {description = "show open windows", group = "client"}),
 
     -- Volume Control

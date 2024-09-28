@@ -49,6 +49,14 @@ end
 local scale = determine_scale_factor()
 local sensors = determine_sensors()
 
+function fn_scalef(n)
+    return scale * n
+end
+
+function fn_scale(n)
+    return math.floor(fn_scalef(n))
+end
+
 local config = {
     modkey = "Mod4",
 
@@ -61,8 +69,10 @@ local config = {
     resource_path = script_path() .. "resources",
     ui_scale = scale,
 
-    scalef = function(n) return scale * n end,
-    scale = function(n) return math.floor(scale * n) end,
+    scalef = fn_scalef,
+    scale = fn_scale,
+
+    rofi = ("rofi -dpi %s "):format(fn_scale(96)),
 
     host_name = determine_host_name(),
 
