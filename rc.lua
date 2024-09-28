@@ -103,7 +103,15 @@ mymainmenu = awful.menu({
 mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon, menu = mymainmenu })
 
 -- Create a systray
-mysystray = wibox.widget.systray()
+mysystray = wibox.container.background(
+        wibox.container.margin(
+                wibox.widget.systray(),
+                config.scalef(0),
+                config.scalef(10),
+                config.scalef(3),
+                config.scalef(3)),
+        "#000000"
+)
 
 -- Create a clock
 myclock = revolution.widget.conky()
@@ -175,10 +183,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
             -- Right widgets
             {
                 layout = wibox.layout.fixed.horizontal,
-                wibox.container.background(
-                        wibox.container.margin(mysystray, config.scale(7), config.scale(7), config.scale(2), config.scale(2)),
-                        "#000000"
-                ),
+                mysystray,
                 myclock,
                 s.mylayoutbox
             }
