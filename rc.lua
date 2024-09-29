@@ -113,7 +113,7 @@ mysystray = wibox.container.margin(
 
 -- Create a clock
 myclock = revolution.widget.conky()
-myclock:set_value("${time %H:%M}")
+myclock:set_value("<b>${time %H:%M}</b>")
 myclock:set_value_color(beautiful.fg_normal)
 awful.tooltip({
     objects = { myclock },
