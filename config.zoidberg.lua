@@ -1,12 +1,22 @@
 local wibox = require("wibox")
 local revolution = require("revolution")
 
-return function(config) 
+return function(config)
     config.middle_widgets = {
-        layout = wibox.layout.fixed.horizontal,    
+        layout = wibox.layout.fixed.horizontal,
         {
-            value = "${cpu}% "..config.hwmon("k10temp", 1, "temp 1").."°",
+            value = "${cpu}% "..config.hwmon("k10temp", 1, "temp 1").."° "..config.hwmon("nct6799", 1, "fan 2").."↻",
             label = "CPU",
+            widget = revolution.widget.conky
+        },
+        {
+            value = config.hwmon("nct6799", 1, "temp 2").."° "..config.hwmon("nct6799", 1, "fan 7").."↻",
+            label = "H2O",
+            widget = revolution.widget.conky
+        },
+        {
+            value = config.hwmon("nct6799", 1, "temp 1").."° "..config.hwmon("nct6799", 1, "fan 4").."↻",
+            label = "SYS",
             widget = revolution.widget.conky
         },
         {
