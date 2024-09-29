@@ -19,6 +19,7 @@ local blue        = "#4877b1"
 local blue_dark   = "#2B476A"
 local blue_darker = "#192A3F"
 local orange      = "#f57f1f"
+local magenta     = "#A660C3"
 
 theme = {}
 
@@ -56,8 +57,8 @@ theme.systray_icon_spacing = config.scale(4)
 theme.tooltip_fg = theme.fg_normal
 
 -- TAGLIST
-theme.taglist_font          = font_monospace
-theme.taglist_fg_focus      = orange
+theme.taglist_font          = font_monospace_bold
+theme.taglist_fg_focus      = magenta
 theme.taglist_squares_sel   = config.resource_path .. "/taglist/squarefz.png"
 theme.taglist_squares_unsel = config.resource_path .. "/taglist/squarez.png"
 
