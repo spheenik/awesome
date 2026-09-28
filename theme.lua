@@ -26,6 +26,9 @@ theme = {}
 theme.wallpaper     = config.resource_path .. "/wall.jpg"
 theme.awesome_icon  = config.resource_path .. "/awesome-icon.png"
 
+theme.useless_gap = config.scale(2)
+theme.gap_single_client = false
+
 -- FONTS
 theme.font          = font_monospace
 

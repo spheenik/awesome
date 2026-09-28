@@ -26,6 +26,8 @@ end
 
 function conkyupdater.start()
 
+    --do return end
+
     local config = [=[
         conky.config = {
             out_to_console = true,
@@ -41,6 +43,10 @@ function conkyupdater.start()
     ]=]
 
     gdebug.print_warning(gdebug.dump_return(config))
+
+    local f = io.open("/tmp/conky.stdin", "w+")
+    f:write(config)
+    f:close()
 
     local pid, _, stdin, stdout, _ = awesome.spawn({"conky", "-c", "-"}, false, true, true, false)
     assert(type(pid) == "number", "Failed to start conky: " .. pid)
